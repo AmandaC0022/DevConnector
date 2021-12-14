@@ -1,8 +1,9 @@
 const express = require('express'); 
 const router = express.Router(); 
 
-//test GET route 
-router.get('/', (req, res) => {
+// Register new User 
+router.post('/', (req, res) => {
+    console.log(req.body); 
     res.send('User route'); 
 }); 
 
