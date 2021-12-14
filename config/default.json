@@ -1,3 +1,4 @@
 {
-    "mongoURI": "mongodb+srv://Amanda123:Amanda123@devconnector.ycss6.mongodb.net/DevConnector?retryWrites=true&w=majority"
+    "mongoURI": "mongodb+srv://Amanda123:Amanda123@devconnector.ycss6.mongodb.net/DevConnector?retryWrites=true&w=majority", 
+    "secret": "mysupersecretsecret"
 }
