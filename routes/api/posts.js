@@ -48,4 +48,26 @@ router.get('/', auth, async (req, res) => {
     }
 }); 
 
+//Get a single post by id 
+router.get('/:id', auth, async (req, res) => {
+    try {
+        //this sorts by the newest date
+        const post = await Post.findById(req.params.id); 
+
+        //if no post is found, then...
+        if(!post) {
+            return res.status(404).json({ msg: "Post not found." }); 
+        }
+
+        res.json(post); 
+    } catch (err) {
+        
+        if(err.kind == 'ObjectId') {
+            return res.status(404).json({ msg: "Post not found." }); 
+        }
+        console.error(err.message); 
+        res.status(500).send("Server Error"); 
+    }
+}); 
+
 module.exports = router; 
