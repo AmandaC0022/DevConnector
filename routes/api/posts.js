@@ -61,7 +61,7 @@ router.get('/:id', auth, async (req, res) => {
 
         res.json(post); 
     } catch (err) {
-        
+
         if(err.kind == 'ObjectId') {
             return res.status(404).json({ msg: "Post not found." }); 
         }
@@ -69,5 +69,31 @@ router.get('/:id', auth, async (req, res) => {
         res.status(500).send("Server Error"); 
     }
 }); 
+
+//Delete a post 
+router.delete('/:id', auth, async (req, res) => {
+    try {
+        const post = await Post.findById(req.params.id); 
+
+        //check to see if user is the post's creator
+        if(post.user.toString() !== req.user.id){
+            return res.status(401).json({ msg: 'User not authorized'}); 
+        }
+
+        //if the post doesn't exist, then... 
+        if(!post) {
+            return res.status(404).json({ msg: "Post not found." }); 
+        }
+
+        await post.remove(); 
+        res.json({ msg: "Post was removed." }); 
+    } catch (err) {
+        if(err.kind == 'ObjectId') {
+            return res.status(404).json({ msg: "Post not found." }); 
+        }
+        console.error(err.message); 
+        res.status(500).send("Server Error"); 
+    }
+});
 
 module.exports = router; 
