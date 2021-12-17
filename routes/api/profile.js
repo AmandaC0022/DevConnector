@@ -4,7 +4,9 @@ const auth = require('../../middleware/auth');
 const Profile = require('../../models/Profile'); 
 const User = require('../../models/User'); 
 const { check, validationResult } = require('express-validator'); 
-
+const request = require('request'); 
+// require('dotenv').config();
+const config = require('config'); 
 
 //GET user's profile  
 router.get('/me', auth, async (req, res) => {
@@ -224,7 +226,8 @@ router.delete('/experience/:exp_id', auth, async (req, res) => {
         profile.experience.splice(removeIndex, 1); 
 
         await profile.save(); 
-        res.json({ msg: "Experience was removed." }); 
+        res.json(profile); 
+        console.log("Experience was removed."); 
 
     } catch (err) {
         console.error(err.message); 
@@ -233,48 +236,87 @@ router.delete('/experience/:exp_id', auth, async (req, res) => {
 }); 
 
 //Add Education to our profile
-// router.put('/education', [auth, [
-//     check('school', "School is required.").not().isEmpty(), 
-//     check('degree', "Degree is required.").not().isEmpty(), 
-//     check('fieldofstudy', "Field of Study is required.").not().isEmpty(), 
-//     check('from', "From Date is required.").not().isEmpty(), 
-// ]], async (req, res)=> {
-//     const errors = validationResult(req); 
-//     if(!errors.isEmpty()) {
-//         return res.status(400).json({ errors: errors.array() }); 
-//     }
+router.put('/education', [auth, [
+    check('school', "School is required.").not().isEmpty(), 
+    check('degree', "Degree is required.").not().isEmpty(), 
+    check('fieldofstudy', "Field of Study is required.").not().isEmpty(), 
+    check('from', "From Date is required.").not().isEmpty(), 
+]], async (req, res)=> {
+    const errors = validationResult(req); 
+    if(!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() }); 
+    }
 
-//     const {
-//         school,
-//         degree, 
-//         fieldofstudy,
-//         from,
-//         to,
-//         current,
-//         description
-//     } = req.body; 
+    const {
+        school,
+        degree, 
+        fieldofstudy,
+        from,
+        to,
+        current,
+        description
+    } = req.body; 
 
-//     const newEdu = {
-//         school,
-//         degree, 
-//         fieldofstudy, 
-//         from,
-//         to, 
-//         current,
-//         description
-//     }
+    const newEdu = {
+        school,
+        degree, 
+        fieldofstudy, 
+        from,
+        to, 
+        current,
+        description
+    }
 
-//     try {
-//         const profile = await Profile.findOne({ user: req.user.id }); 
-//         profile.experience.unshift(newEdu); 
-//         await profile.save(); 
-//         res.json(profile); 
+    try {
+        const profile = await Profile.findOne({ user: req.user.id }); 
+        profile.education.unshift(newEdu); 
+        await profile.save(); 
+        res.json(profile); 
 
-//     } catch (err) {
-//         console.error(err.message); 
-//         res.status(500).send('Server Error'); 
-//     }
-// }); 
+    } catch (err) {
+        console.error(err.message); 
+        res.status(500).send('Server Error'); 
+    }
+}); 
+
+//Delete an Education 
+router.delete('/education/:edu_id', auth, async (req, res) => {
+    try {
+        //we are finding the profile using profile id
+        const profile = await Profile.findOne({ user: req.user.id });  
+        //we are mapping through the array to find the index of an experince id that matches the one in params
+        const removeIndex = profile.education.map(item => item.id).indexOf(req.params.edu_id); 
+        //we use the index# to then remove it from the array
+        profile.education.splice(removeIndex, 1); 
+
+        await profile.save(); 
+        res.json(profile); 
+        console.log("Education was removed.")
+
+    } catch (err) {
+        console.error(err.message); 
+        res.status(500).send('Server Error'); 
+    }
+}); 
+
+//Get User's Github Repos 
+router.get('/github/:username', (req, res) => {
+    try {
+        const options = {
+            uri: `https://api.github.com/users/${req.params.username}/repos?per_page=5&sort=created:asc&client_id=${config.get('githubClientId')}&client_secret=${config.get('githubSecret')}`, 
+            method: 'GET', 
+            headers: { 'user-agent': 'node.js' }
+        }; 
+        request(options, (error, response, body) => {
+            if (err) {
+                console.error(err); 
+            }
+        })
+    } catch (err) {
+        console.error(err.message); 
+        res.status(500).send('Server Error'); 
+    }
+}); 
 
 
 module.exports = router; 

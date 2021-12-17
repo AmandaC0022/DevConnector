@@ -4,6 +4,7 @@ const auth = require('../../middleware/auth');
 const User = require('../../models/User'); 
 const { check, validationResult } = require('express-validator'); 
 const config = require('config'); 
+// require('dotenv').config();
 const jwt = require('jsonwebtoken'); 
 const bcrypt = require('bcryptjs'); 
 

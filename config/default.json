@@ -1,4 +1,6 @@
 {
     "mongoURI": "mongodb+srv://Amanda123:Amanda123@devconnector.ycss6.mongodb.net/DevConnector?retryWrites=true&w=majority", 
-    "secret": "mysupersecretsecret"
+    "secret": "mysupersecretsecret", 
+    "githubClientId": "7d3c835e242beb1b9440",
+    "githubSecret": "94f2f5a9ad2cd22dd867b1cb15fe6b12b871ed5e"
 }
