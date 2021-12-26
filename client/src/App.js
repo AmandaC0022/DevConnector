@@ -1,14 +1,20 @@
 import React, { Fragment } from 'react'; 
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; 
 import './App.css';
-import Navbar from "./components/layout/Navbar"; 
+import Landing from './components/layout/Landing';
+import Navbar from "./components/layout/Navbar";
 
 const App = () => {
   return (
-    <Fragment>
+    <Router>
       <Navbar />
-      <h1>App</h1>
-    </Fragment>
+      <Routes>
+        <Route path="/" element={<Landing />} /> 
+      </Routes>
+    </Router>
   );
 }
 
 export default App;
+
+//Routes has replaced Switch according to the React Docs 
